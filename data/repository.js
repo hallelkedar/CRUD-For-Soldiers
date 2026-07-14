@@ -15,8 +15,8 @@ const createRepo = (tableName) => {
             SELECT * FROM ${tableName}
             WHERE id = ?
             `;
-      const [items] = await pool.execute(query);
-      return [item];
+      const [item] = await pool.execute(query, [id]);
+      return item[0];
     },
     async createItem(data) {
       const keys = Object.keys(data).join(", ");
@@ -24,8 +24,8 @@ const createRepo = (tableName) => {
       const placeholders = values.map((_) => "?").join(", ");
 
       const query = `INSERT INTO ${tableName} (${keys}) VALUES (${placeholders})`;
-      const [result] = await pool.execute(query, values);
-      return result.effectedId;
+      const result = await pool.execute(query, values);
+      return result.affectedRows;
     },
     async updateItem(id, data) {
       const setQuery = Object.keys(data)
@@ -37,7 +37,7 @@ const createRepo = (tableName) => {
             SET ${setQuery}
             WHERE id = ?
             `;
-      const [result] = await pool.execute(query, [values, id]);
+      const result = await pool.execute(query, [values, id]);
       return result.affectedRows > 0;
     },
     async deleteItem(id) {
@@ -45,7 +45,7 @@ const createRepo = (tableName) => {
             DELETE FROM ${tableName}
             WHERE id = ?
             `;
-      const [result] = await pool.execute(query, [id]);
+      const result = await pool.execute(query, [id]);
       return result.affectedRows > 0;
     },
   };
@@ -54,12 +54,11 @@ const createRepo = (tableName) => {
 export const soldierRepo = createRepo("soldiers");
 
 soldierRepo.updateStatus = async (id, status) => {
-    const query = `
+  const query = `
     UPDATE ${tableName}
     SET status = ?
     WHERE id = ?
-    `
-    const [ result ] = await pool.execute(query, [status, id])
-    return result.affectedRows > 0;
+    `;
+  const [result] = await pool.execute(query, [status, id]);
+  return result.affectedRows > 0;
 };
-
