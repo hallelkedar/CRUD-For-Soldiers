@@ -1,4 +1,6 @@
 import express from 'express';
+import dotenv from 'dotenv';
+
 import soldiersRouter from './routes/soldierRouter.js'
 
 const errorHandler = (err, req, res, next) => {
@@ -18,3 +20,7 @@ const app = express()
 app.use(express.json())
 app.use(soldiersRouter)
 app.use(errorHandler)
+
+app.listen(process.env.APP_PORT, () => {
+    `App is running on port ${process.env.APP_PORT}`
+})
