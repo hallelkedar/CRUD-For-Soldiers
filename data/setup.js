@@ -36,7 +36,7 @@ const initTable = async () => {
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`
   try {
-  pool = mysql.createPool({
+  pool = await mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT) || 3306,
     user: process.env.DB_USER || "root",
@@ -54,7 +54,7 @@ const initTable = async () => {
 await initDB()
 await initTable()
 
-export const getPool = async () => {
+export const getPool = () => {
   if (!pool) {
     throw new Error('Enable connect to the database')
   }
