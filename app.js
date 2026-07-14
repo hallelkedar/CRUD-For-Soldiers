@@ -19,7 +19,7 @@ const app = express()
 
 app.use(express.json())
 app.use(soldiersRouter)
-app.use(errorHandler)
+app.use('/soldiers', errorHandler)
 
 app.listen(process.env.APP_PORT, () => {
     `App is running on port ${process.env.APP_PORT}`
