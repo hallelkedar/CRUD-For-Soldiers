@@ -5,8 +5,24 @@ import { soldierSchema, soldierUpdateSchema } from "../utils/validation.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const soldiers = await soldierRepo.getAll();
-  return soldiers;
+  if (Object.keys(req.query).length === 0) {
+    const soldiers = await soldierRepo.getAll();
+    return res.json({
+      success: true,
+      data: soldiers,
+    });
+  }
+  const validation = soldierSchema.partial().safeParse(req.query);
+  if (!validation.success) {
+    const err = new Error(`Invalid query - ${validation.error.flatten()}`);
+    err.statusCode = 400;
+    return next(err);
+  }
+  const soldiers = await soldierRepo.find(req.query);
+  return res.json({
+    success: true,
+    data: soldiers,
+  });
 });
 
 router.post("/", async (req, res, next) => {
@@ -106,4 +122,4 @@ router.patch("/:id/status", async (req, res, next) => {
   });
 });
 
-export default router
+export default router;
