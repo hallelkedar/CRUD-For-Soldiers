@@ -2,7 +2,7 @@ import express from "express";
 import { soldierRepo } from "../data/repository.js";
 import { soldierSchema, soldierUpdateSchema } from "../utils/validation.js";
 
-const router = express.Router();
+export const router = express.Router();
 
 router.get("/", async (req, res) => {
   const soldiers = await soldierRepo.getAll();
