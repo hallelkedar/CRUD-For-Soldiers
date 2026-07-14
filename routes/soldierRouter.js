@@ -2,7 +2,7 @@ import express from "express";
 import { soldierRepo } from "../data/repository.js";
 import { soldierSchema, soldierUpdateSchema } from "../utils/validation.js";
 
-export const router = express.Router();
+const router = express.Router();
 
 router.get("/", async (req, res) => {
   const soldiers = await soldierRepo.getAll();
@@ -105,3 +105,5 @@ router.patch("/:id/status", async (req, res, next) => {
     data: `Soldier (${id} status changed to - ${req.body.status})`,
   });
 });
+
+export default router
