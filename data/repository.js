@@ -35,8 +35,8 @@ const createRepo = (tableName) => {
       const placeholders = values.map((_) => "?").join(", ");
 
       const query = `INSERT INTO ${tableName} (${keys}) VALUES (${placeholders})`;
-      const result = await pool.execute(query, values);
-      return result.affectedRows;
+      const [result] = await pool.execute(query, values);
+      return result.insertId;
     },
     async updateItem(id, data) {
       const setQuery = Object.keys(data)
