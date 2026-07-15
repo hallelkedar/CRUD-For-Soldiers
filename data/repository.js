@@ -4,13 +4,17 @@ const pool = getPool();
 
 const createRepo = (tableName) => {
   return {
-    async getAll() {
-      const query = `SELECT * FROM ${tableName}`;
-      const [items] = await pool.execute(query);
-      return items;
-    },
+    tableName,
     async find(filter) {
-      const keysQuery = Object.keys(filter)
+      const keys = Object.keys(filter)
+      
+      if (keys.length === 0) {
+        const query = `SELECT * FROM ${tableName}`;
+        const [items] = await pool.execute(query);
+        return items;
+      }
+
+      const keysQuery = keys
         .map((key) => `${key} = ?`)
         .join(" AND ");
       const values = Object.values(filter);
@@ -20,7 +24,7 @@ const createRepo = (tableName) => {
         WHERE ${keysQuery}
         `;
 
-      const [items] = await pool.execute(query, [values]);
+      const [items] = await pool.execute(query, values);
       return items;
     },
     async getById(id) {
@@ -44,13 +48,13 @@ const createRepo = (tableName) => {
       const setQuery = Object.keys(data)
         .map((key) => `${key} = ?`)
         .join(", ");
-      const values = Object.values(data);
+      const values = [...Object.values(data), id]
       const query = `
             UPDATE ${tableName}
             SET ${setQuery}
             WHERE id = ?
             `;
-      const result = await pool.execute(query, [values, id]);
+      const [result] = await pool.execute(query, values);
       return result.affectedRows > 0;
     },
     async deleteItem(id) {
@@ -58,7 +62,7 @@ const createRepo = (tableName) => {
             DELETE FROM ${tableName}
             WHERE id = ?
             `;
-      const result = await pool.execute(query, [id]);
+      const [result] = await pool.execute(query, [id]);
       return result.affectedRows > 0;
     },
   };
@@ -68,7 +72,7 @@ export const soldierRepo = createRepo("soldiers");
 
 soldierRepo.updateStatus = async (id, status) => {
   const query = `
-    UPDATE ${tableName}
+    UPDATE soldiers
     SET status = ?
     WHERE id = ?
     `;

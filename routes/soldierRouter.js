@@ -5,13 +5,6 @@ import { soldierSchema, soldierUpdateSchema } from "../utils/validation.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  if (Object.keys(req.query).length === 0) {
-    const soldiers = await soldierRepo.getAll();
-    return res.json({
-      success: true,
-      data: soldiers,
-    });
-  }
   const validation = soldierSchema.partial().safeParse(req.query);
   if (!validation.success) {
     const errorDetails = JSON.stringify(validation.error.flatten().fieldErrors)
@@ -112,7 +105,8 @@ router.patch("/:id/status", async (req, res, next) => {
     err.statusCode = 400;
     return next(err);
   }
-  if (!Object.keys(req.body) !== ["status"]) {
+  const reqKeys = Object.keys(req.body)
+  if (reqKeys.length !== 0 && reqKeys[0] !== "status") {
     const err = new Error("Key must be 'status'.");
     err.statusCode = 400;
     return next(err);
