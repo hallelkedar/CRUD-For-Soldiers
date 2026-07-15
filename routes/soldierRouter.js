@@ -14,7 +14,8 @@ router.get("/", async (req, res) => {
   }
   const validation = soldierSchema.partial().safeParse(req.query);
   if (!validation.success) {
-    const err = new Error(`Invalid query - ${validation.error.flatten()}`);
+    const errorDetails = JSON.stringify(validation.error.flatten().fieldErrors)
+    const err = new Error(`Invalid query - ${errorDetails}`);
     err.statusCode = 400;
     return next(err);
   }
@@ -28,7 +29,8 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res, next) => {
   const validation = soldierSchema.safeParse(req.body);
   if (!validation.success) {
-    const err = new Error(`Invalid body - ${validation.error.flatten()}`);
+    const errorDetails = JSON.stringify(validation.error.flatten().fieldErrors)
+    const err = new Error(`Invalid body - ${errorDetails}`);
     err.statusCode = 422;
     return next(err);
   }
@@ -68,7 +70,8 @@ router.put("/:id", async (req, res, next) => {
 
   const validation = soldierUpdateSchema.safeParse(req.body);
   if (!validation.success) {
-    const err = new Error(`Invalid body - ${validation.error.flatten()}`);
+    const errorDetails = JSON.stringify(validation.error.flatten().fieldErrors)
+    const err = new Error(`Invalid body - ${errorDetails}`);
     err.statusCode = 422;
     return next(err);
   }
