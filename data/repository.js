@@ -10,17 +10,19 @@ const createRepo = (tableName) => {
       return items;
     },
     async find(filter) {
-        const keysQuery = Object.keys(filter).map(key => `${key} = ?`).join(' AND ')
-        const values = Object.values(filter)
+      const keysQuery = Object.keys(filter)
+        .map((key) => `${key} = ?`)
+        .join(" AND ");
+      const values = Object.values(filter);
 
-        const query = `
+      const query = `
         SELECT * FROM ${tableName}
         WHERE ${keysQuery}
-        `
+        `;
 
-        const [items] = await pool.execute(query, [values])
-        return items;
-    },  
+      const [items] = await pool.execute(query, [values]);
+      return items;
+    },
     async getById(id) {
       const query = `
             SELECT * FROM ${tableName}
